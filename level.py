@@ -70,7 +70,7 @@ class Level:
             "height": height
         })
 
-    def add_bucket(self, x, y, width, height, number_sugar_grains):
+    def add_bucket(self, x, y, width, height, needed_sugar):
         """
         Add a bucket to the level.
         """

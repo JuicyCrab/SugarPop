@@ -1,0 +1,74 @@
+{
+    "number_sugar_grains": 100,
+    "statics": [
+        {
+            "x1": 300,
+            "y1": 0,
+            "x2": 300,
+            "y2": 600,   
+            "color": "light green",
+            "line_width": 3,
+            "friction": 0.4,
+            "restitution": 0.5 
+        },
+        {
+            "x1": 200,
+            "y1": 450,
+            "x2": 300,
+            "y2": 450,
+            "color": "light green",
+            "line_width": 3,
+            "friction": 0.4,
+            "restitution": 0.5
+        },
+        {
+            "x1": 0,
+            "y1": 600,
+            "x2": 100,
+            "y2": 600,
+            "color": "light green",
+            "line_width": 4,
+            "friction": 0,
+            "restitution": 2
+        },{
+            "x1": 0,
+            "y1": 280,
+            "x2": 100,
+            "y2": 280,
+            "color": "light green",
+            "line_width": 4,
+            "friction": 0.5,
+            "restitution": 4
+        },{
+            "x1": 400,
+            "y1": 180,
+            "x2": 500,
+            "y2": 150,
+            "color": "magenta",
+            "line_width": 4,
+            "friction": 0.5,
+            "restitution": 3
+        },{
+            "x1": 750,
+            "y1": 799,
+            "x2": 850,
+            "y2": 799,
+            "color": "magenta",
+            "line_width": 4,
+            "friction": 0.5,
+            "restitution": 3
+        }],
+    "buckets": [
+        {
+            "x": 150,
+            "y": 50,
+            "width": 50,
+            "height": 40,
+            "needed_sugar": 20
+        }
+       
+    ],
+    "spout_x": 440,
+    "spout_y": 700,
+    "time_to_complete_level": 90
+}

@@ -9,7 +9,7 @@
             "color": "gray",
             "line_width": 3,
             "friction": 0.4,
-            "restitution": 0.5
+            "restitution": 0.5 
         },
         {
             "x1": 300,
@@ -30,8 +30,16 @@
             "line_width": 4,
             "friction": 0.5,
             "restitution": 0.6
-        }
-    ],
+        },{
+            "x1": 300,
+            "y1": 350,
+            "x2": 500,
+            "y2": 300,
+            "color": "gray",
+            "line_width": 3,
+            "friction": 0.4,
+            "restitution": 0.5
+        }],
     "buckets": [
         {
             "x": 200,

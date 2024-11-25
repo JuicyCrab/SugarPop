@@ -9,7 +9,7 @@
 import pygame as pg
 
 # Window settings
-RES = WIDTH, HEIGHT = 800, 1024
+RES = WIDTH, HEIGHT = 1024, 800
 FPS = 60
 
 # Scaling factor (Pixels per meter)
@@ -29,3 +29,9 @@ START_FLOW = pg.USEREVENT + 1
 FLOW_DELAY = pg.USEREVENT + 2
 LOAD_NEW_LEVEL = pg.USEREVENT + 3
 EXIT_APP = pg.USEREVENT + 4
+LEVEL_COMPLETE = pg.USEREVENT + 5
+UP_ARROW = pg.USEREVENT + 6 
+
+
+# create a loop through a dict containg the channal name, song file name 
+#example background = (channel number, file name)
