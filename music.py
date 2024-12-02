@@ -14,6 +14,12 @@ mixer sound(name)
 snd 1 = mixer.channel
 self.channel.play(snd1) """
 
+""" pg.mixer.init()
+s1= pg.miixer.Sound("song name")
+self.channell= pg.mixer.channel(0)
+self.channel.play(self.s1, 0)  """
+
+
 import pygame as pg
 
 class Music:
@@ -23,11 +29,11 @@ class Music:
         pg.mixer.init()
 
         self.music_songs = {
-            "background": pg.mixer.Sound("Game.mp3"),
-            "bucket": pg.mixer.Sound("Explosion_Sound.wav"),
-            "add_ball": pg.mixer.Sound("Add_ball.wav"),
-            "complete_level": pg.mixer.Sound("Complete_level.wav"),
-            "failed_level": pg.mixer.Sound("Failed_level.wav"),
+            "background": pg.mixer.Sound("./music/Game.mp3"),
+            "bucket": pg.mixer.Sound("./music/Explosion_Sound.wav"),
+            "add_ball": pg.mixer.Sound("./music/Add_ball.wav"),
+            "complete_level": pg.mixer.Sound("./music/Complete_level.wav"),
+            "failed_level": pg.mixer.Sound("./music/Failed_level.wav"),
         }
 
         # channels
@@ -36,12 +42,12 @@ class Music:
         self.channel3 = pg.mixer.Channel(2)  # Channel 2 for add ball sound
         self.channel4 = pg.mixer.Channel(3)  # Channel 3 for Complete level sound
         self.channel5 = pg.mixer.Channel(4)  # Channel 4 for Failed level sound
-
+    
     def play(self, key):
         """Play looping background music."""
         sound = self.music_songs.get(key)
         if sound:
-            self.channel1.play(sound, loops=-1)  # Loop background music indefinitely
+            self.channel1.play(sound, loops=0)  # Loop background music indefinitely
 
     def stop(self):
         """Stop the background music."""

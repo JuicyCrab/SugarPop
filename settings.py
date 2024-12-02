@@ -30,8 +30,8 @@ FLOW_DELAY = pg.USEREVENT + 2
 LOAD_NEW_LEVEL = pg.USEREVENT + 3
 EXIT_APP = pg.USEREVENT + 4
 LEVEL_COMPLETE = pg.USEREVENT + 5
-UP_ARROW = pg.USEREVENT + 6 
+
+#timer for paused restart when message appears 
 
 
-# create a loop through a dict containg the channal name, song file name 
-#example background = (channel number, file name)
+

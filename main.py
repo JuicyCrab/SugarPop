@@ -14,10 +14,11 @@ import random
 import static_item
 import dynamic_item
 from sugar_grain import Sugar_Grain
-import bucket
+import bucket  
 import level
 import message_display
 from music import Music 
+
 
 
 
@@ -32,10 +33,16 @@ class Game:
 
         pg.mixer.pre_init()
         self.music = Music()
+
+      
+
+
+    
+       
         
        
         # Play game music when the game starts
-        self.music.channe1.play()
+        self.music.channel1.play(pg.mixer.Sound("./music/Game.mp3"))
         # Initialize font for HUD
         self.font = pg.font.SysFont(None, 36)  # Default font, size 36
 
@@ -46,11 +53,14 @@ class Game:
         self.space.gravity = (0, -4.8)  # Gravity pointing downwards in Pymunk's coordinate system
         # Iterations defaults to 10. Higher is more accurate collison detection
         self.space.iterations = 30 
+        self.is_paused = False 
 
         self.drawing_lines = []
         self.sugar_grains = []
         self.buckets = []
         self.statics = []
+       
+        self.teleportation_zones = []
         self.total_sugar_count = None
         self.level_spout_position = None
         self.level_grain_dropping = None
@@ -80,7 +90,9 @@ class Game:
         self.drawing_lines = []  # Clear the list
         self.buckets = []
         self.statics = []
- 
+        self.teleportation_zones = []
+
+        
         new_level = LEVEL_FILE_NAME.replace("X", str(levelnumber))
         self.level = level.Level(new_level)
         
@@ -92,10 +104,19 @@ class Game:
             self.level_spout_position = (self.level.data['spout_x'], self.level.data['spout_y'])
             self.build_main_walls()
 
+            if 'teleportations' in self.level.data:  # Ensure teleportations are defined in the JSON
+                for tp in self.level.data['teleportations']:
+                    self.teleportation_zones.append({
+                    'entry': (tp['entry'][0], tp['entry'][1]),  # Correctly extract x and y from entry array
+                    'exit': (tp['exit'][0], tp['exit'][1]),    # Correctly extract x and y from exit array
+                    'radius': tp.get('entry_radius', 15)        # Use the provided radius, default to 15 if not present
+                })
+                print(f"Loaded teleportation zones: {self.teleportation_zones}") 
+           
             # Load buckets
             for nb in self.level.data['buckets']:
                 self.buckets.append(bucket.Bucket(self.space, nb['x'], nb['y'], nb['width'], nb['height'], nb['needed_sugar']))
-            # Load static items
+            
             for nb in self.level.data['statics']:
                 self.statics.append(static_item.StaticItem(self.space, nb['x1'], nb['y1'], nb['x2'], nb['y2'], nb['color'], nb['line_width'], nb['friction'], nb['restitution']))
             self.total_sugar_count = self.level.data['number_sugar_grains']
@@ -103,6 +124,7 @@ class Game:
             self.message_display.show_message("Level Up", 10)
             self.level_complete = False
             return True
+        
 
     def build_main_walls(self):
         '''Build the walls, ceiling, and floor of the screen'''
@@ -127,6 +149,9 @@ class Game:
 
     def update(self):
         '''Update the program physics'''
+    
+        if self.is_paused:
+            return 
         # Keep an overall iterator
         self.iter += 1
         
@@ -144,7 +169,9 @@ class Game:
             self.iter = 0
 
         pg.display.set_caption(f'fps: {self.clock.get_fps():.1f}')
-        
+        for grain in self.sugar_grains:
+            grain.check_teleport() 
+            
         # Only do the following every 20 frames for less system stress
         if self.iter % 20 == 0:
             # Update any messages
@@ -156,21 +183,42 @@ class Game:
                 for sugar_grain in self.sugar_grains:
                     bucket.collect(sugar_grain)
                 if bucket.exploded and bucket.count >= bucket.needed_sugar:
-                    if self.music.current_music != "Exploding Bucket":
-                        self.music.play_sound_effect("Exploding Bucket")
-                        # If all the buckets are gone, level up!
+                    # Handle explosion logic, e.g., if all the buckets are gone, level up!
                     if not self.level_complete and self.check_all_buckets_exploded():
                         self.level_complete = True
                         self.message_display.show_message("Level Complete!", 2)
-                        self.music.channel.play(self.snd1)
+                        self.music.channel4.play(pg.mixer.Sound("./music/Complete_level.wav"))
                         pg.time.set_timer(LOAD_NEW_LEVEL, 2000)  # Schedule next level load
+
                 
             # Count the grains in the un-exploded buckets
             for grain in self.sugar_grains:
                 for bucket in self.buckets:
                     bucket.collect(grain)
-    
-    
+            for grain in self.sugar_grains:
+                for tp in self.teleportation_zones:
+                    entry_x, entry_y = tp['entry']
+                    exit_x, exit_y = tp['exit']
+                    entry_radius = tp['radius']
+        
+
+                    grain_x = grain.body.position.x
+                    grain_y = grain.body.position.y
+            
+                    # Calculate the distance from the grain to the entry point
+                    dx = grain_x - entry_x
+                    dy = grain_y - entry_y
+                    distance_to_entry = (dx**2 + dy**2) ** 0.5
+
+                    # If within the entry portal's radius, teleport the grain
+                    if distance_to_entry <= entry_radius:
+                        print(f"Teleporting grain to ({exit_x}, {exit_y})")
+                        grain.body.position = (exit_x, exit_y)
+                        grain.body.velocity = (0, 0)  # Reset motion
+                        self.space.reindex_shapes_for_body(grain.body)  # Update PyMunk physics
+                        break  # Optionally reset velocity to prevent continued motion
+                       
+
                 
             # Drop sugar if needed
             if self.level_grain_dropping:
@@ -217,7 +265,6 @@ class Game:
         for static in self.statics:
             static.draw(self.screen)
 
-        # Draw the nozzle (Remember to subtract y from the height)
         if self.level_spout_position:
             pg.draw.line(
                 self.screen, 
@@ -226,7 +273,17 @@ class Game:
                 (self.level_spout_position[0], HEIGHT - self.level_spout_position[1]), 
                 5
             )
-        
+
+        # Draw the nozzle (Remember to subtract y from the height)
+        for tp in self.teleportation_zones:
+            entry_x, entry_y = tp['entry']
+            exit_x, exit_y = tp['exit']
+            entry_radius = tp['radius']
+            pg.draw.circle(self.screen, pg.Color('blue'), (int(entry_x), HEIGHT - int(entry_y)), entry_radius)
+            pg.draw.circle(self.screen, pg.Color('pink'), (int(exit_x), HEIGHT - int(exit_y)), 20)
+
+
+
         # Draw the heads-up display
         self.draw_hud()
 
@@ -242,6 +299,33 @@ class Game:
             if event.type == EXIT_APP or event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
                 pg.quit()
                 sys.exit()
+
+            elif event.type == pg.KEYDOWN and event.key == pg.K_r: #restart 
+                    self.current_level -= 1
+                    self.message_display.show_message("Restart", 1)
+                    pg.time.set_timer(LOAD_NEW_LEVEL, 2000) 
+
+                
+
+            elif event.type == pg.KEYDOWN and event.key ==pg.K_UP:
+                self.message_display.show_message("Reverse Gravity", 1)
+                self.space.gravity = (0, 4.8)
+        
+
+            
+
+            elif event.type == pg.KEYDOWN and event.key ==pg.K_DOWN:
+                 self.message_display.show_message("Normal Gravity", 1)
+                 self.space.gravity = (0, -4.8)
+               
+
+            elif event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
+                self.is_paused = not self.is_paused #makes it the opposite 
+                self.message_display.show_message("Paused", 1)
+            
+    
+
+
             elif event.type == pg.MOUSEBUTTONDOWN:
                 self.mouse_down = True
                 # Get mouse position and start a new dynamic line
@@ -277,10 +361,8 @@ class Game:
                     pg.time.set_timer(EXIT_APP, 5000)  # Quit game after 5 seconds
                 else:
                     self.message_display.show_message(f"Level {self.current_level} Start!", 2)
-           
-            elif event.key == pg.K_UP:
-                    self.space.gravity = (0, 9.8)  # Stronger downward gravity
-                    print("reverse gravity")
+          
+   
        
                 
 

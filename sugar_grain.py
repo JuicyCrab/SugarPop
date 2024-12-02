@@ -8,9 +8,10 @@
 import pygame as pg
 import pymunk
 from settings import SCALE, HEIGHT
+import random 
 
 class Sugar_Grain:
-    def __init__(self, space, x, y, friction=0.3):
+    def __init__(self, space, x, y, friction=0.3, teleport_point_1=(200, 0), teleport_point_2=(500, 0), teleport_target=(1000, 800)):
         """
         Initialize a sugar grain as a small dynamic body in Pymunk.
         
@@ -41,13 +42,37 @@ class Sugar_Grain:
 
         # Add the body and shape to the space
         self.space.add(self.body, self.shape)
-        
+
+        self.teleporting = False
+        self.teleport_point_1 = teleport_point_1  # First teleportation point
+        self.teleport_point_2 = teleport_point_2  # Second teleportation point
+        self.teleport_target =  teleport_target  # Final teleport target
+
+    def teleport(self, x, y):
+        """Teleports the sugar grain to a new position."""
+        self.body.position = (x / SCALE, y / SCALE)
+
+    def check_teleport(self):
+        """Check if the sugar grain reaches teleportation points."""
+        # Check if it reaches the second teleportation point
+        if not self.teleporting and (abs(self.body.position.x * SCALE - self.teleport_point_2[0]) < 5 and
+                                     abs(self.body.position.y * SCALE - self.teleport_point_2[1]) < 5):
+            self.teleporting = True
+            # Teleport to the final destination
+            self.teleport(random.randint(1000, 1024), 800)
+        elif not self.teleporting and (abs(self.body.position.x * SCALE - self.teleport_point_1[0]) < 5 and
+                                       abs(self.body.position.y * SCALE - self.teleport_point_1[1]) < 5):
+            self.teleporting = True
+            # Teleport to the final destination
+            self.teleport(random.randint(1000, 1024), 800)
+
+
     def update(self):
         """
         Update method for sugar_grain.
-        In this case, Pymunk handles the physics, so nothing is needed here.
+        This checks if the grain reaches teleportation points and teleports it.
         """
-        pass
+        self.check_teleport()
 
     def draw(self, screen):
         """

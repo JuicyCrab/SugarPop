@@ -16,17 +16,6 @@ class Bucket:
     def __init__(self, space, x, y, width, height, needed_sugar):
 
         self.music = Music()
-        self.music.add_music("Add sugar to bucket", "Add_ball.wav")
-        """
-        Initialize the bucket with an open top by creating three static segments 
-        for each wall (left, right, bottom).
-        
-        :param space: The Pymunk space.
-        :param x: X position of the bucket's center in Pygame coordinates.
-        :param y: Y position of the bucket's top in Pygame coordinates.
-        :param width: Width of the bucket in pixels.
-        :param height: Height of the bucket in pixels.
-        """
         self.space = space
         self.width = width / SCALE
         self.height = height / SCALE
@@ -35,10 +24,12 @@ class Bucket:
         self.collected_sugar = []
 
         wall_thickness = 0.2  # Thickness of the walls in physics units
+        
 
         # Convert Pygame coordinates to Pymunk coordinates
         x_pymunk = x / SCALE
         y_pymunk = y / SCALE # (HEIGHT - y) / SCALE  # Adjust y-coordinate for Pymunk's coordinate system
+
 
         # Left wall
         left_wall_start = (x_pymunk - self.width / 2, y_pymunk - self.height / 2)
@@ -104,6 +95,7 @@ class Bucket:
 
         self.exploded = True  # Mark the bucket as exploded
         
+
     def draw(self, screen):
         """
         Draw the bucket with an open top on the Pygame screen.
@@ -125,6 +117,7 @@ class Bucket:
     def count_reset(self):
         if not self.exploded:
             self.count = 0
+
         
     def collect(self, sugar_grain):
         """
@@ -148,12 +141,15 @@ class Bucket:
             if sugar_grain not in self.collected_sugar:
                 self.collected_sugar.append(sugar_grain)
                 self.count += 1 
-    
-                self.music.play_sound_effect("Add sugar to bucket")
-                if self.music.current_music != "Game":
-                    self.music.play_sound_effect("Game")
+                self.music.play_sound_effect("add_ball")
+                if self.count >= self.needed_sugar and not self.exploded:
+                    self.explode(self.collected_sugar)  # Explode the bucket
+                    self.music.play_sound_effect( "bucket")
                 return True  # Indicate that the grain was collected
-        return False  # Grain not collected
+        return False
+    
+  
+
         
 
     def delete(self):
