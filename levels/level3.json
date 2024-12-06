@@ -119,6 +119,13 @@
             "width": 60,
             "height": 50,
             "needed_sugar": 1
+        },
+        {
+            "x": 790,
+            "y": 740,
+            "width": 60,
+            "height": 50,
+            "needed_sugar": 1
         }
     ],
     
@@ -143,7 +150,7 @@
         }
     ],
     "spout_x": 335,
-    "spout_y": 780,
+    "spout_y": 760,
     "time_to_complete_level": 60
 }
   

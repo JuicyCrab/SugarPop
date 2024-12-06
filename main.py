@@ -38,9 +38,9 @@ class Game:
         self.music = Music()
 
         # HeadsUpDisplay
-        self.font = pg.font.SysFont("Impact", 22)
-        self.hud = HeadsUpDisplay(self.screen,self.font,position=(self.screen.get_width()- 280, self.screen.get_height()- 40),level_position=(self.screen.get_width() - 80, 10),
-            sugar_position=(2, 10))
+        self.font = pg.font.SysFont("Impact", 18)
+        self.hud = HeadsUpDisplay(self.screen,self.font,position=(self.screen.get_width()- 230, self.screen.get_height()- 40),level_position=(self.screen.get_width() - 70, 10),
+            sugar_position=(2, 0))
         self.sugar_used = 0 
 
         self.is_intro = True
@@ -51,7 +51,7 @@ class Game:
 
 
         # Create a Pymunk space with gravity
-        self.current_level = 3 #start the level and 1 below for creating level 3)
+        self.current_level = 2 #start the level and 1 below for creating level 3)
         self.level_complete = False
         self.space = pymunk.Space()
         self.space.gravity = (0, -4.8)  # Gravity pointing downwards in Pymunk's coordinate system
@@ -175,6 +175,10 @@ class Game:
         if self.is_paused or self.game_over:
             return 
         # Keep an overall iterator
+        if self.level_complete:
+            self.hud_visible = False
+        else:
+            self.hud_visible = True
         self.iter += 1
         
         # Calculate time since last frame
@@ -212,6 +216,7 @@ class Game:
                         self.message_display.show_message("Level Complete!", 2)
                         self.music.channel4.play(pg.mixer.Sound("./music/Complete_level.wav"))
                         pg.time.set_timer(LOAD_NEW_LEVEL, 2000)  # Schedule next level load
+                        self.hud_visible = False
 
                 
             # Count the grains in the un-exploded buckets
@@ -292,14 +297,14 @@ class Game:
             for static in self.statics:
                 static.draw(self.screen)
 
-            if self.level_spout_position:
-                pg.draw.line(
-                    self.screen, 
-                    (255, 165, 144), 
-                    (self.level_spout_position[0], HEIGHT - self.level_spout_position[1] - 10), 
-                    (self.level_spout_position[0], HEIGHT - self.level_spout_position[1]), 
-                    5
-                )
+            if not self.game_over and not self.level_complete and self.level_spout_position:
+                    pg.draw.line(
+                        self.screen, 
+                        (255, 165, 144), 
+                        (self.level_spout_position[0], HEIGHT - self.level_spout_position[1] - 10), 
+                        (self.level_spout_position[0], HEIGHT - self.level_spout_position[1]), 
+                        5
+                    )
 
             # Draw the nozzle (Remember to subtract y from the height)
             for tp in self.teleportation_zones:
@@ -311,8 +316,10 @@ class Game:
 
 
             # Draw the heads-up display
+            if not self.game_over and not self.level_complete:
+            # Draw the heads-up display
+                self.hud.draw(self.buckets, self.moving_buckets)
 
-            self.hud.draw(self.buckets, self.moving_buckets)
 
             # Show any messages needed        
             self.message_display.draw(self.screen)
@@ -335,11 +342,11 @@ class Game:
                 
 
             elif event.type == pg.KEYDOWN and event.key == pg.K_UP:
-                self.hud.add_message("Reverse Gravity", 2)  # Show message for 2 seconds
+                self.message_display.show_message("Reverse Gravity", 2)  # Show message for 2 seconds
                 self.space.gravity = (0, 4.8)
    
             elif event.type == pg.KEYDOWN and event.key == pg.K_DOWN:
-                self.hud.add_message("Normal Gravity", 2)
+                self.message_display.show_message("Normal Gravity", 2)
                 self.space.gravity = (0, -4.8)
                
 

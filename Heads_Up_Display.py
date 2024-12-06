@@ -28,7 +28,7 @@ class HeadsUpDisplay:
         self.total_sugar = total_sugar
         self.sugar_used = sugar_used
         self.sugar_grains = sugar_grains
-        
+    
 
     def draw_level(self):
         """Draw the current level on the screen."""
@@ -36,10 +36,11 @@ class HeadsUpDisplay:
         level_surface = self.font.render(level_text, True, (255, 255, 255))
         self.screen.blit(level_surface, self.level_position)
 
+
     def draw_sugar_count(self):
         """Draw the sugar count on the screen."""
         remaining_sugar = self.total_sugar - len(self.sugar_grains)
-        sugar_text = f"Sugar Used: {self.sugar_used}/{self.total_sugar} | Remaining Sugar: {remaining_sugar}"
+        sugar_text = f"Total Sugar: {self.total_sugar} | Remaining Sugar: {remaining_sugar}"
         sugar_surface = self.font.render(sugar_text, True, (255, 255, 255))
         self.screen.blit(sugar_surface, self.sugar_position)
 
@@ -48,6 +49,15 @@ class HeadsUpDisplay:
         bucket_text = f"Buckets: {len(buckets)} | Moving Buckets: {len(moving_buckets)}"
         bucket_surface = self.font.render(bucket_text, True, (255, 255, 255))
         self.screen.blit(bucket_surface, self.position)
+
+    def draw_bucket_counters(self, buckets):
+        """Draw the sugar grain counters for each bucket."""
+        for i, bucket in enumerate(buckets):
+            # Position the counter near each bucket (adjust for your needs)
+            bucket_position = (2, 25 + i * 25)  # Stack counters vertically
+            bucket_text = f"Bucket {i + 1}: {bucket.get_collected_count()} grains collected"
+            bucket_surface = self.font.render(bucket_text, True, (255, 255, 255))
+            self.screen.blit(bucket_surface, bucket_position)
 
     def draw(self, buckets, moving_buckets):
         """
@@ -60,6 +70,7 @@ class HeadsUpDisplay:
         self.draw_level()
         self.draw_sugar_count()
         self.draw_bucket_info(buckets, moving_buckets)
+        self.draw_bucket_counters(buckets)
 
 
 

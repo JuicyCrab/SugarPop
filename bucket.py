@@ -22,6 +22,7 @@ class Bucket:
         self.count = 0  # Counter for collected sugar grains
         self.needed_sugar = needed_sugar
         self.collected_sugar = []
+        self.grain_constraints = []
         wall_thickness = 0.2  # Thickness of the walls in physics units
         
 
@@ -55,7 +56,10 @@ class Bucket:
         space.add(self.bottom_wall)
         
         self.exploded = False  # Track if the bucket has exploded
-
+    def get_collected_count(self):
+        """Return the number of sugar grains collected in this bucket."""
+        return self.count
+    
     def explode(self, grains):
         """
         Apply a radial force to all grains near the bucket and remove the bucket walls.
@@ -89,6 +93,9 @@ class Bucket:
                 impulse = (dx * impulse_magnitude, dy * impulse_magnitude)
                 grain.body.apply_impulse_at_world_point(impulse, grain.body.position)
 
+        for constraint in self.grain_constraints:
+            self.space.remove(constraint)
+        self.grain_constraints.clear()
         # Remove the bucket walls
         self.space.remove(self.left_wall, self.right_wall, self.bottom_wall)
 
@@ -140,14 +147,20 @@ class Bucket:
         # Check if the grain's position is within the bucket's bounding box
         if left <= grain_pos.x <= right and bottom <= grain_pos.y <= top:
             if sugar_grain not in self.collected_sugar:  # Avoid double-collecting
-                self.collected_sugar.append(sugar_grain)  # Add to collected list
+                bucket_center = pymunk.Vec2d((left + right) / 2, (bottom + top) / 2)
+                joint = pymunk.PinJoint(sugar_grain.body, self.space.static_body, (0, 0), bucket_center)
+                self.space.add(joint)
+                self.grain_constraints.append(joint)
+                self.collected_sugar.append(sugar_grain)
+                sugar_grain.body.velocity = (0, 0)  # Add to collected list
                 self.count += 1  # Increase count
                 self.music.play_sound_effect("add_ball")  # Play sound effect
 
                 # Check if the bucket should explode
                 if self.count >= self.needed_sugar and not self.exploded:
                     self.explode(self.collected_sugar)  # Trigger explosion
-                    self.music.play_sound_effect("bucket")  # Play explosion sound
+                    self.music.play_sound_effect("bucket")
+                      # Play explosion sound
                 return True  # Indicate successful collection
 
         return False  # Grain was not collected
