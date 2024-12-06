@@ -115,20 +115,25 @@
     "buckets": [
         {
             "x": 335,
-            "y": 123,
+            "y": 135,
             "width": 60,
             "height": 50,
-            "needed_sugar": 3
-        },
-        {
-            "x": 770,
-            "y": 773,
-            "width": 60,
-            "height": -50,
             "needed_sugar": 1
         }
     ],
     
+    "moving_buckets": [
+    {
+            "x": 335,
+            "y": 135,
+            "width": 60,
+            "height": 50,
+            "speed": 100
+            
+    }
+], 
+
+
      "teleportations": [
         {
             "entry": [400, 0],
@@ -141,5 +146,7 @@
     "spout_y": 780,
     "time_to_complete_level": 60
 }
+  
+   
   
    

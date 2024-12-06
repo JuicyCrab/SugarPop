@@ -81,7 +81,14 @@ class Level:
             "height": height,
             "needed_sugar": needed_sugar
         })
-
+    def add_moving_buckets(self, x, y, width, height, needed_sugar):
+        self.data["moving_buckets"].append({
+            "x": x, 
+            "y": y,
+            "width": width, 
+            "height": height, 
+            "needed_sugar": needed_sugar
+         })
     def set_number_sugar_grains(self, count):
         """
         Set the total number of sugar grains for the level.

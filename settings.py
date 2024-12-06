@@ -10,7 +10,7 @@ import pygame as pg
 
 # Window settings
 RES = WIDTH, HEIGHT = 1024, 800
-FPS = 60
+FPS = 120
 
 # Scaling factor (Pixels per meter)
 SCALE = 30  # Scale Factor: 30 pixels per meter

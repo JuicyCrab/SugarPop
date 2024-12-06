@@ -5,6 +5,13 @@
 # By: Brett W. Huffman
 # Description: The sugar grain implementation of the sugar pop game
 #############################################################
+#############################################################
+# Module Name: Sugar Pop Sugar 'Grain' Module
+# Project: Sugar Pop Program
+# Date: Nov 17, 2024
+# By: Brett W. Huffman
+# Description: The sugar grain implementation of the sugar pop game
+#############################################################
 import pygame as pg
 import pymunk
 from settings import SCALE, HEIGHT
@@ -42,6 +49,7 @@ class Sugar_Grain:
 
         # Add the body and shape to the space
         self.space.add(self.body, self.shape)
+        self.shape.collision_type = 2
 
         self.teleporting = False
         self.teleport_point_1 = teleport_point_1  # First teleportation point
