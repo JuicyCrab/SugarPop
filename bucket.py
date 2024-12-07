@@ -24,7 +24,8 @@ class Bucket:
         self.collected_sugar = []
         self.grain_constraints = []
         wall_thickness = 0.2  # Thickness of the walls in physics units
-        
+        self.bucketx = x
+        self.buckety = y
 
         # Convert Pygame coordinates to Pymunk coordinates
         x_pymunk = x / SCALE

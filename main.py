@@ -46,15 +46,16 @@ class Game:
 
         # HeadsUpDisplay
         self.font = pg.font.SysFont("Impact", 18)
-        self.hud = HeadsUpDisplay(self.screen,self.font,position=(self.screen.get_width()- 230, self.screen.get_height()- 40),level_position=(self.screen.get_width() - 70, 10),
-            sugar_position=(2, 0))
+        self.hud = HeadsUpDisplay(self.screen,self.font,position=(2, 30),
+                                                        level_position=(self.screen.get_width() - 70, 10),
+                                                        sugar_position=(2, 0))
         self.sugar_used = 0 
 
         #Boolean for intro 
         self.is_intro = True
 
         # Create a Pymunk space with gravity
-        self.current_level = 0 #start the level 
+        self.current_level = 2 #start the level 
         self.level_complete = False
         self.space = pymunk.Space()
         self.space.gravity = (0, -4.8)  # Gravity pointing downwards in Pymunk's coordinate system
