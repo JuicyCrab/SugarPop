@@ -1,17 +1,11 @@
 #############################################################
 # Module Name: Sugar Pop Sugar 'Grain' Module
 # Project: Sugar Pop Program
-# Date: Nov 17, 2024
-# By: Brett W. Huffman
+# Date: Dec 6, 2024
+# By: Eyasu Smieja 
 # Description: The sugar grain implementation of the sugar pop game
-#############################################################
-#############################################################
-# Module Name: Sugar Pop Sugar 'Grain' Module
-# Project: Sugar Pop Program
-# Date: Nov 17, 2024
-# By: Brett W. Huffman
-# Description: The sugar grain implementation of the sugar pop game
-#############################################################
+##############################################################
+
 import pygame as pg
 import pymunk
 from settings import SCALE, HEIGHT

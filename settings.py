@@ -1,8 +1,8 @@
 #############################################################
 # Module Name: Sugar Pop Settings Module
 # Project: Sugar Pop Program
-# Date: Nov 17, 2024
-# By: Brett W. Huffman
+# Date: Dec 6, 2024
+# By: Eyasu Smieja 
 # Description: The settings implementation of the sugar pop game
 #############################################################
 

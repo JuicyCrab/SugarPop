@@ -1,26 +1,14 @@
+#############################################################
+# Module Name: Sugar Pop Dynamic Item Module
+# Project: Sugar Pop Program
+# Date: Dec 6, 2024
+# By: Eyasu Smieja 
+# Description: The music item of the sugar pop game
+#############################################################
+
 import pygame as pg 
 from pygame import mixer
-#create channel 
-#pygame mixer channel
 
-#s1 = self.sound(name)
-#self.sound.play(1)
-""" self.channel.play """
-
-""" list_ snd [names]
-snd buckt = index 
-seld.channel1= pygame.mixer.channel(sndbucket)
-mixer sound(name)
-snd 1 = mixer.channel
-self.channel.play(snd1) """
-
-""" pg.mixer.init()
-s1= pg.miixer.Sound("song name")
-self.channell= pg.mixer.channel(0)
-self.channel.play(self.s1, 0)  """
-
-
-import pygame as pg
 
 class Music:
     def __init__(self):

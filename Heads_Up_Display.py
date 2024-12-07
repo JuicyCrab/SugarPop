@@ -1,3 +1,11 @@
+#############################################################
+# Module Name: Sugar Pop Dynamic Item Module
+# Project: Sugar Pop Program
+# Date: Dec 6, 2024
+# By: Eyasu Smieja 
+# Description: The heads up display of the sugar pop game
+#############################################################
+
 class HeadsUpDisplay:
     def __init__(self, screen, font, position=(10, 10), level_position=(10, 50), sugar_position=(10, 90)):
         self.screen = screen

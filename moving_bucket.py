@@ -1,3 +1,11 @@
+#############################################################
+# Module Name: Sugar Pop Dynamic Item Module
+# Project: Sugar Pop Program
+# Date: Dec 6, 2024
+# By: Eyasu Smieja 
+# Description: The Moving bucket implemtation of the sugar pop game
+#############################################################
+
 import pygame as pg
 import pymunk
 from settings import SCALE, HEIGHT, WIDTH

@@ -26,16 +26,22 @@ from Heads_Up_Display import HeadsUpDisplay
 
 class Game:
     def __init__(self) -> None:
+        #pygame intialization 
         pg.init()
 
-        #game music  
+        #Setup screen  
         self.screen = pg.display.set_mode(RES)
         self.clock = pg.time.Clock()
         self.iter = 0
         self.level = None 
 
+        #game music 
         pg.mixer.pre_init()
         self.music = Music()
+        # Play game music when the game starts
+        self.music.channel1.play(pg.mixer.Sound("./music/Game.mp3"))
+
+        
 
 
         # HeadsUpDisplay
@@ -44,17 +50,11 @@ class Game:
             sugar_position=(2, 0))
         self.sugar_used = 0 
 
+        #Boolean for intro 
         self.is_intro = True
 
-        # Play game music when the game starts
-        self.music.channel1.play(pg.mixer.Sound("./music/Game.mp3"))
-        # Initialize font for HUD
-
-        
-
-
         # Create a Pymunk space with gravity
-        self.current_level = 2 #start the level and 1 below for creating level 3)
+        self.current_level = 2 #start the level 
         self.level_complete = False
         self.space = pymunk.Space()
         self.space.gravity = (0, -4.8)  # Gravity pointing downwards in Pymunk's coordinate system
@@ -66,10 +66,12 @@ class Game:
         self.drawing_lines = []
         self.sugar_grains = []
         self.buckets = []
+        #Moving Bucket class intializer 
         self.moving_bucket = MovingBucket(self.space, 335, 678, 50, 46, 10)
+
+
+        
         self.statics = []
-        #moving buvkets list
-       
         self.teleportation_zones = []
         self.total_sugar_count = None
         self.level_spout_position = None
@@ -78,9 +80,6 @@ class Game:
         self.current_line = None
         self.message_display = message_display.MessageDisplay(font_size=72)
         self.total_sugar = 100
-        
-
-        
         
 
         # Load the intro image
@@ -94,6 +93,7 @@ class Game:
     def load_level(self, levelnumber=0):
         #The gravity resets for each level. 
         self.space.gravity = (0, -4.8)
+
         # Destroy any current game objects
         for item in self.sugar_grains:
             item.delete()  # Delete all sugar grains
@@ -108,8 +108,6 @@ class Game:
         self.buckets = []
         self.statics = []
         self.teleportation_zones = []
-
-
 
         new_level = LEVEL_FILE_NAME.replace("X", str(levelnumber))
         self.level = level.Level(new_level)
@@ -126,9 +124,9 @@ class Game:
             if 'teleportations' in self.level.data:  # Ensure teleportations are defined in the JSON
                 for tp in self.level.data['teleportations']:
                     self.teleportation_zones.append({
-                    'entry': (tp['entry'][0], tp['entry'][1]),  # Correctly extract x and y from entry array
-                    'exit': (tp['exit'][0], tp['exit'][1]),    # Correctly extract x and y from exit array
-                    'radius': tp.get('entry_radius', 15)        # Use the provided radius, default to 15 if not present
+                    'entry': (tp['entry'][0], tp['entry'][1]),  # x and y from entry list
+                    'exit': (tp['exit'][0], tp['exit'][1]),    # x and y from exit list 
+                    'radius': tp.get('entry_radius', 15)        # radius = 15 
                 })
                 print(f"Loaded teleportation zones: {self.teleportation_zones}") 
            
@@ -136,18 +134,19 @@ class Game:
             for nb in self.level.data['buckets']:
                 self.buckets.append(bucket.Bucket(self.space, nb['x'], nb['y'], nb['width'], nb['height'], nb['needed_sugar']))
 
-           
-
-            
+           #load statics 
             for nb in self.level.data['statics']:
                 self.statics.append(static_item.StaticItem(self.space, nb['x1'], nb['y1'], nb['x2'], nb['y2'], nb['color'], nb['line_width'], nb['friction'], nb['restitution']))
+            
+            #Sugar count 
             self.total_sugar_count = self.level.data['number_sugar_grains']
             pg.time.set_timer(START_FLOW, 5 * 1000)  # 5 seconds
             self.message_display.show_message("Level Up", 10)
             self.level_complete = False
-
             self.total_sugar_count = self.level.data.get('number_sugar_grains', 0)  # Use 0 as fallback
             self.sugar_used = 0  # Reset sugar used
+
+            #Heads Up display when the level loads
             self.hud.update_level(self.current_level)
             self.hud.update_sugar_count(self.total_sugar, self.sugar_used, self.sugar_grains)   
             return True
@@ -179,11 +178,13 @@ class Game:
     
         if self.is_paused or self.game_over:
             return 
-        # Keep an overall iterator
+       #When the level completes the HUD dissapers and when the level starts it reappears 
         if self.level_complete:
             self.hud_visible = False
         else:
             self.hud_visible = True
+
+        # Keep an overall iterator
         self.iter += 1
         
         # Calculate time since last frame
@@ -224,18 +225,17 @@ class Game:
                         pg.time.set_timer(LOAD_NEW_LEVEL, 2000)  # Schedule next level load
                         self.hud_visible = False
 
-                
-
             # Count the grains in the un-exploded buckets
             for grain in self.sugar_grains:
                 for bucket in self.buckets:
                     bucket.collect(grain)
     
-
+            # Collect for moving bucket
             for grain in self.sugar_grains:
                 self.moving_bucket.collect(grain)
 
             for grain in self.sugar_grains:
+                #Grains only teleport for level 2 
                 if self.current_level == 2:
                     for tp in self.teleportation_zones:
                         entry_x, entry_y = tp['entry']
@@ -249,13 +249,13 @@ class Game:
                         dy = grain_y - entry_y
                         distance_to_entry = (dx**2 + dy**2) ** 0.5
 
-                        # If within the entry portal's radius, teleport the grain
+                        # If the sugar grain's entry radius, teleport the grain
                         if distance_to_entry <= entry_radius:
                             print(f"Teleporting grain to ({exit_x}, {exit_y})")
                             grain.body.position = (exit_x, exit_y)
                             grain.body.velocity = (0, 0)  # Reset motion
-                            self.space.reindex_shapes_for_body(grain.body)  # Update PyMunk physics
-                            break  # Optionally reset velocity to prevent continued motion
+                            self.space.reindex_shapes_for_body(grain.body)  
+                            break 
                        
 
                 
@@ -268,8 +268,7 @@ class Game:
                 if len(self.sugar_grains) >= self.total_sugar_count:
                     self.level_grain_dropping = False
 
-
-        
+            #HUD for displaying the level while playing a level
             self.hud.update_level(self.current_level)
 
 
@@ -287,7 +286,8 @@ class Game:
     
             for bucket in self.buckets:
                 bucket.draw(self.screen)
-    
+
+            #draw moving bucket for level 3 
             if self.current_level == 3:
                 self.moving_bucket.draw(self.screen) 
 
@@ -328,10 +328,9 @@ class Game:
 
             # Draw the heads-up display
             if not self.game_over and not self.level_complete:
+
             # Draw the heads-up display
                 self.hud.draw(self.buckets, [self.moving_bucket])
-            
-    
 
             # Show any messages needed        
             self.message_display.draw(self.screen)
@@ -409,19 +408,12 @@ class Game:
                     self.message_display.show_message(f"Level {self.current_level} Start!", 2)
                     self.hud.update_level(self.current_level)
 
-           
-
-
     # Move the bucket based on arrow keys
             elif event.type == pg.KEYDOWN and event.key == pg.K_LEFT: 
                 self.moving_bucket.move_bucket(dx=-10, dy=0)  # Move left
 
             elif event.type == pg.KEYDOWN and event.key == pg.K_RIGHT:
                     self.moving_bucket.move_bucket(dx=10, dy=0)  # Move right
-
-
-                
-
             
     def run(self):
         '''Run the main game loop'''
