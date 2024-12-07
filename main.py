@@ -37,6 +37,7 @@ class Game:
         pg.mixer.pre_init()
         self.music = Music()
 
+
         # HeadsUpDisplay
         self.font = pg.font.SysFont("Impact", 18)
         self.hud = HeadsUpDisplay(self.screen,self.font,position=(self.screen.get_width()- 230, self.screen.get_height()- 40),level_position=(self.screen.get_width() - 70, 10),
@@ -77,6 +78,10 @@ class Game:
         self.bucket_dx = 0
         self.total_sugar = 100
         
+        self.moving_bucket = MovingBucket(self.space, 100, 100, 50, 50, 10)
+        
+        
+
         # Load the intro image
         self.intro_image = pg.image.load("./images/SugarPop.png").convert()  # Load the intro image
         # Get new height based on correct scale
@@ -132,7 +137,7 @@ class Game:
             #load moving buckets 
             if "moving_buckets" in self.level.data:
                 for nb in self.level.data['moving_buckets']:
-                    self.moving_buckets.append(MovingBucket(self.space, nb['x'], nb['y'], nb['width'], nb['height'], nb['speed']))
+                    self.moving_buckets.append(MovingBucket(self.space, nb['x'], nb['y'], nb['width'], nb['height'], nb['needed_sugar']))
             
             for nb in self.level.data['statics']:
                 self.statics.append(static_item.StaticItem(self.space, nb['x1'], nb['y1'], nb['x2'], nb['y2'], nb['color'], nb['line_width'], nb['friction'], nb['restitution']))
@@ -189,6 +194,7 @@ class Game:
 
         # Step the physics simulation forward with the calculated time_step
         self.space.step(time_step)
+
         
         # Update our game counter
         if self.iter == 60:
@@ -219,6 +225,7 @@ class Game:
                         self.hud_visible = False
 
                 
+
             # Count the grains in the un-exploded buckets
             for grain in self.sugar_grains:
                 for bucket in self.buckets:
@@ -311,7 +318,7 @@ class Game:
                 entry_x, entry_y = tp['entry']
                 exit_x, exit_y = tp['exit']
                 entry_radius = tp['radius']
-                pg.draw.circle(self.screen, pg.Color('blue'), (int(entry_x), HEIGHT - int(entry_y)), entry_radius)
+                pg.draw.circle(self.screen, pg.Color('blue'), (int(entry_x), HEIGHT - int(entry_y)), 20)
                 pg.draw.circle(self.screen, pg.Color('pink'), (int(exit_x), HEIGHT - int(exit_y)), 10)
 
 
@@ -346,7 +353,7 @@ class Game:
                 self.space.gravity = (0, 4.8)
    
             elif event.type == pg.KEYDOWN and event.key == pg.K_DOWN:
-                self.message_display.show_message("Normal Gravity", 2)
+                self.message_display.show_message("Normal Gravity ", 2)
                 self.space.gravity = (0, -4.8)
                
 
@@ -396,14 +403,16 @@ class Game:
                 else:
                     self.message_display.show_message(f"Level {self.current_level} Start!", 2)
                     self.hud.update_level(self.current_level)
-        
-            elif event.type == pg.KEYDOWN and event.key == pg.K_LEFT:
-                self.bucket_dx = -1  # Move buckets left
-            elif event.type == pg.KEYDOWN and event.key == pg.K_RIGHT:
-                self.bucket_dx = 1  # Move buckets right
-            elif event.type == pg.KEYUP:
-                if event.key in [pg.K_LEFT, pg.K_RIGHT]:
-                    self.bucket_dx = 0
+
+            elif event.type == pg.key.get_pressed():
+                if event.key == pg.K_LEFT:
+                    for moving_bucket in self.moving_buckets:
+                        moving_bucket.move(moving_bucket.current_bucket.body.position.x - 10, moving_bucket.current_bucket.body.position.y)  # Move left
+                elif event.key == pg.K_RIGHT:
+                    for moving_bucket in self.moving_buckets:
+                        moving_bucket.move(moving_bucket.current_bucket.body.position.x + 10, moving_bucket.current_bucket.body.position.y)  # Move right
+            
+                  
                 
        
                 

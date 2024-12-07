@@ -2,21 +2,18 @@ import pygame as pg
 import time 
 
 class HeadsUpDisplay:
-    def __init__(self, screen, font, position=(10, 10), level_position=(10, 50), sugar_position=(10, 90), timer_position=(10, 130)):
+    def __init__(self, screen, font, position=(10, 10), level_position=(10, 50), sugar_position=(10, 90),):
 
         self.screen = screen
         self.font = font
         self.position = position
         self.level_position = level_position
         self.sugar_position = sugar_position
-        self.timer_postion = timer_position
         self.level = 1
         self.total_sugar = 0  # Total sugar available in the level
         self.sugar_used = 0   # Sugar grains already used
         self.sugar_grains = []  # Current sugar grains on screen
-        self.timer_start = 100  # Timer starts at 100 seconds
-        self.time_remaining = self.timer_start
-        self.timer_last_tick = time.time()
+    
         
 
     def update_level(self, level):

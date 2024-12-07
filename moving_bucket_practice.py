@@ -23,7 +23,7 @@ def create_bucket(space, x, y, width, height):
     # Create bucket's body
     bucket_body = pymunk.Body(1000, float('inf'), pymunk.Body.DYNAMIC)
     bucket_body.position = x, y
-    bucket_body.gravity_scale = 0
+    bucket_body.gravity_scale = 0  # Prevent gravity from affecting the bucket
 
     # Bottom platform
     bottom = pymunk.Segment(bucket_body, (-width / 2, 0), (width / 2, 0), 5)
@@ -33,15 +33,18 @@ def create_bucket(space, x, y, width, height):
     # Left wall
     left_wall = pymunk.Segment(bucket_body, (-width / 2, 0), (-width / 2, -height), 5)
     left_wall.elasticity = 0.5
+    left_wall.friction = 1.0
 
     # Right wall
     right_wall = pymunk.Segment(bucket_body, (width / 2, 0), (width / 2, -height), 5)
     right_wall.elasticity = 0.5
+    right_wall.friction = 1.0
 
-    # Add to space
+    # Add shapes to the space
     space.add(bucket_body, bottom, left_wall, right_wall)
 
     return bucket_body
+
 
 # Create a floor
 def create_floor(space):

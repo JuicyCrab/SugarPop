@@ -1,5 +1,5 @@
 {
-    "number_sugar_grains": 125,
+    "number_sugar_grains": 80,
     "statics": [
         {
             "x1": 100,
@@ -57,6 +57,6 @@
         }
     ],
     "spout_x": 300,
-    "spout_y": 850,
+    "spout_y": 600,
     "time_to_complete_level": 90
 }

@@ -1,49 +1,43 @@
-import pygame as pg 
-import pymunk 
-def create_bucket(space, x, y, width, height):
-    # Create bucket's body
-    bucket_body = pymunk.Body(1000, float('inf'), pymunk.Body.DYNAMIC)
-    bucket_body.position = x, y
-    bucket_body.gravity_scale = 0
+import pygame as pg
+import pymunk
+from settings import SCALE, HEIGHT, WIDTH
+from music import Music
+from bucket import Bucket
 
-    # Bottom platform
-    bottom = pymunk.Segment(bucket_body, (-width / 2, 0), (width / 2, 0), 5)
-    bottom.elasticity = 0.5
-    bottom.friction = 1.0
+class MovingBucket:
+    def __init__(self, space, x, y, width, height, needed_sugar):
+        self.space = space
+        self.width = width / SCALE
+        self.height = height / SCALE
+        self.needed_sugar = needed_sugar
+        self.music = Music()
+        self.current_bucket = Bucket(space, x, y, width, height, needed_sugar)
 
-    # Left wall
-    left_wall = pymunk.Segment(bucket_body, (-width / 2, 0), (-width / 2, -height), 5)
-    left_wall.elasticity = 0.5
+    def move(self, new_x, new_y):
+        """
+        Move the bucket to a new position and create a new bucket instance at the new position.
+        """
+        # Destroy the current bucket (remove walls, etc.)
+        self.current_bucket.delete()
 
-    # Right wall
-    right_wall = pymunk.Segment(bucket_body, (width / 2, 0), (width / 2, -height), 5)
-    right_wall.elasticity = 0.5
+        # Create a new bucket at the new position
+        self.current_bucket = Bucket(self.space, new_x, new_y, self.width * SCALE, self.height * SCALE, self.needed_sugar)
+        self.music.play_sound_effect("move_bucket")  # Optional: play a sound when moving the bucket
 
-    # Add to space
-    space.add(bucket_body, bottom, left_wall, right_wall)
+    def draw(self, screen):
+        """
+        Draw the current bucket to the screen.
+        """
+        self.current_bucket.draw(screen)
 
-    return bucket_body
+    def get_collected_count(self):
+        """
+        Return the number of collected sugar grains in the current bucket.
+        """
+        return self.current_bucket.get_collected_count()
 
-# Create a floor
-def create_floor(space):
-    floor = pymunk.Segment(space.static_body, (0, 50), (WIDTH, 50), 5)
-    floor.elasticity = 0.8
-    space.add(floor)
-
-# Create a ball
-def create_ball(space, x, y, radius=10):
-    body = pymunk.Body(1, pymunk.moment_for_circle(1, 0, radius))
-    body.position = x, y
-    shape = pymunk.Circle(body, radius)
-    shape.elasticity = 0.6
-    shape.friction = 0.8
-    space.add(body, shape)
-    return shape
-
-# Draw the bucket
-def draw_bucket(screen, bucket_body, width, height):
-    color = (200, 0, 200)
-    pos = bucket_body.position
-    pg.draw.line(screen, color, to_pygame((pos.x - width / 2, pos.y)), to_pygame((pos.x + width / 2, pos.y)), 3)  # Bottom
-    pg.draw.line(screen, color, to_pygame((pos.x - width / 2, pos.y)), to_pygame((pos.x - width / 2, pos.y - height)), 3)  # Left
-    pg.draw.line(screen, color, to_pygame((pos.x + width / 2, pos.y)), to_pygame((pos.x + width / 2, pos.y - height)), 3)  # Right
+    def collect(self, sugar_grain):
+        """
+        Collect sugar grains with the current bucket.
+        """
+        return self.current_bucket.collect(sugar_grain)

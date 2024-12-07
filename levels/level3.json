@@ -1,5 +1,5 @@
 {
-    "number_sugar_grains": 100,
+    "number_sugar_grains": 80,
     "statics": [
         {
             "x1": 670,
@@ -113,13 +113,7 @@
         }
     ],
     "buckets": [
-        {
-            "x": 335,
-            "y": 135,
-            "width": 60,
-            "height": 50,
-            "needed_sugar": 1
-        },
+    
         {
             "x": 790,
             "y": 740,
@@ -132,10 +126,10 @@
     "moving_buckets": [
     {
             "x": 335,
-            "y": 135,
+            "y": 122,
             "width": 60,
             "height": 50,
-            "speed": 100
+            "needed_sugar": 1
             
     }
 ], 
