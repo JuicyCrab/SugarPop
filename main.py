@@ -55,7 +55,7 @@ class Game:
         self.is_intro = True
 
         # Create a Pymunk space with gravity
-        self.current_level = 2 #start the level 
+        self.current_level = 0 #start the level 
         self.level_complete = False
         self.space = pymunk.Space()
         self.space.gravity = (0, -4.8)  # Gravity pointing downwards in Pymunk's coordinate system
