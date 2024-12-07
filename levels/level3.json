@@ -122,19 +122,6 @@
             "needed_sugar": 1
         }
     ],
-    
-    "moving_buckets": [
-    {
-            "x": 335,
-            "y": 122,
-            "width": 60,
-            "height": 50,
-            "needed_sugar": 1
-            
-    }
-], 
-
-
      "teleportations": [
         {
             "entry": [400, 0],

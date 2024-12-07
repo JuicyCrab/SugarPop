@@ -1,9 +1,5 @@
-import pygame as pg
-import time 
-
 class HeadsUpDisplay:
-    def __init__(self, screen, font, position=(10, 10), level_position=(10, 50), sugar_position=(10, 90),):
-
+    def __init__(self, screen, font, position=(10, 10), level_position=(10, 50), sugar_position=(10, 90)):
         self.screen = screen
         self.font = font
         self.position = position
@@ -13,7 +9,6 @@ class HeadsUpDisplay:
         self.total_sugar = 0  # Total sugar available in the level
         self.sugar_used = 0   # Sugar grains already used
         self.sugar_grains = []  # Current sugar grains on screen
-    
         
 
     def update_level(self, level):
@@ -25,14 +20,12 @@ class HeadsUpDisplay:
         self.total_sugar = total_sugar
         self.sugar_used = sugar_used
         self.sugar_grains = sugar_grains
-    
 
     def draw_level(self):
         """Draw the current level on the screen."""
         level_text = f"Level: {self.level}"
         level_surface = self.font.render(level_text, True, (255, 255, 255))
         self.screen.blit(level_surface, self.level_position)
-
 
     def draw_sugar_count(self):
         """Draw the sugar count on the screen."""
@@ -43,6 +36,9 @@ class HeadsUpDisplay:
 
     def draw_bucket_info(self, buckets, moving_buckets):
         """Draw the bucket information on the screen."""
+        if self.level != 3 :
+             moving_buckets.clear()
+       
         bucket_text = f"Buckets: {len(buckets)} | Moving Buckets: {len(moving_buckets)}"
         bucket_surface = self.font.render(bucket_text, True, (255, 255, 255))
         self.screen.blit(bucket_surface, self.position)
@@ -66,8 +62,9 @@ class HeadsUpDisplay:
         """
         self.draw_level()
         self.draw_sugar_count()
-        self.draw_bucket_info(buckets, moving_buckets)
+        self.draw_bucket_info(buckets, moving_buckets)  # Corrected to use moving_buckets
         self.draw_bucket_counters(buckets)
+
 
 
 
