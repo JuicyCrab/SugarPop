@@ -1,8 +1,8 @@
 #############################################################
 # Module Name: Sugar Pop Main Module
 # Project: Sugar Pop Program
-# Date: Nov 17, 2024
-# By: Brett W. Huffman
+# Date: Dec 6, 2024
+# By: Eyasu Smieja
 # Description: The main implementation of the sugar pop game
 #############################################################
 
@@ -54,7 +54,7 @@ class Game:
         self.is_intro = True
 
         # Create a Pymunk space with gravity
-        self.current_level = 2 #start the level 
+        self.current_level = 0 #start the level 
         self.level_complete = False
         self.space = pymunk.Space()
         self.space.gravity = (0, -4.8)  # Gravity pointing downwards in Pymunk's coordinate system
@@ -67,7 +67,7 @@ class Game:
         self.sugar_grains = []
         self.buckets = []
         #Moving Bucket class intializer 
-        self.moving_bucket = MovingBucket(self.space, 335, 678, 50, 46, 10)
+        self.moving_bucket = MovingBucket(self.space, 335, 678, 50, 46, 30)
 
 
         
@@ -79,7 +79,7 @@ class Game:
         self.mouse_down = False
         self.current_line = None
         self.message_display = message_display.MessageDisplay(font_size=72)
-        self.total_sugar = 100
+        self.total_sugar = 80
         
 
         # Load the intro image
@@ -171,7 +171,8 @@ class Game:
         """
         Check if all buckets have exploded.
         """
-        return all(bucket.exploded for bucket in self.buckets and self.moving_bucket)
+        return all(bucket.exploded for bucket in self.buckets)
+
 
     def update(self):
         '''Update the program physics'''
@@ -322,8 +323,14 @@ class Game:
                 entry_x, entry_y = tp['entry']
                 exit_x, exit_y = tp['exit']
                 entry_radius = tp['radius']
-                pg.draw.circle(self.screen, pg.Color('blue'), (int(entry_x), HEIGHT - int(entry_y)), 20)
-                pg.draw.circle(self.screen, pg.Color('pink'), (int(exit_x), HEIGHT - int(exit_y)), 10)
+                
+                # Draw the entry square in blue
+                pg.draw.rect(self.screen, pg.Color('blue'), 
+                            pg.Rect(entry_x - entry_radius, HEIGHT - entry_y - entry_radius, 2 * entry_radius, 2 * entry_radius))
+                
+                # Draw the exit square in pink
+                pg.draw.rect(self.screen, pg.Color('pink'), 
+                            pg.Rect(exit_x - entry_radius, HEIGHT - exit_y - entry_radius, 2 * entry_radius, 2 * entry_radius))
 
 
             # Draw the heads-up display

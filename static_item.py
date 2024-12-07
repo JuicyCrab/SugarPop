@@ -5,6 +5,7 @@
 # By: Eyasu Smieja 
 # Description: The static item implementation of the sugar pop game
 #############################################################
+
 import pygame as pg
 import pymunk
 from settings import SCALE, HEIGHT

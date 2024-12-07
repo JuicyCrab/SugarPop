@@ -12,7 +12,7 @@ from settings import SCALE, HEIGHT
 import random 
 
 class Sugar_Grain:
-    def __init__(self, space, x, y, friction=0.3, teleport_point_1=(200, 0), teleport_point_2=(500, 0), teleport_target=(1000, 800)):
+    def __init__(self, space, x, y, friction=0.3, teleport_point_1=(296, 0), teleport_point_2=(376, 0), teleport_target=(900, 800)):
         """
         Initialize a sugar grain as a small dynamic body in Pymunk.
         
@@ -61,12 +61,12 @@ class Sugar_Grain:
                                      abs(self.body.position.y * SCALE - self.teleport_point_2[1]) < 5):
             self.teleporting = True
             # Teleport to the final destination
-            self.teleport(random.randint(1000, 1024), 800)
+            self.teleport(random.randint(900, 990), 800)
         elif not self.teleporting and (abs(self.body.position.x * SCALE - self.teleport_point_1[0]) < 5 and
                                        abs(self.body.position.y * SCALE - self.teleport_point_1[1]) < 5):
             self.teleporting = True
             # Teleport to the final destination
-            self.teleport(random.randint(1000, 1024), 800)
+            self.teleport(random.randint(900, 990), 800)
 
 
     def update(self):

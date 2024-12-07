@@ -46,14 +46,14 @@
             "y": 50,
             "width": 50,
             "height": 40,
-            "needed_sugar": 40
+            "needed_sugar": 30
         },
         {
             "x": 400,
             "y": 50,
             "width": 50,
             "height": 40,
-            "needed_sugar": 35
+            "needed_sugar": 30
         }
     ],
     "spout_x": 300,

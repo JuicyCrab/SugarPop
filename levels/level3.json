@@ -119,15 +119,15 @@
             "y": 740,
             "width": 60,
             "height": 50,
-            "needed_sugar": 1
+            "needed_sugar": 20
         }
     ],
      "teleportations": [
         {
-            "entry": [400, 0],
+            "entry": [336, 0],
             "exit": [900, 800],
-            "entry_radius": 100,
-            "exit_radius": 100
+            "entry_radius": 40,
+            "exit_radius": 40
         }
     ],
     "spout_x": 335,
